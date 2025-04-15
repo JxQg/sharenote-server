@@ -53,15 +53,28 @@ def cook_note(data):
     with open(note_template_path, 'r') as f:
         html = f.read()
 
+    # 处理元数据
+    meta = []
+    if 'title' in template:
+        meta.append(f'<meta property="og:title" content="{template["title"]}">')
+    if 'description' in template:
+        meta.append(f'<meta name="description" content="{template["description"]}" property="og:description">')
+
+    # 替换模板变量
     replacements = {
-        'TEMPLATE_TITLE': template['title'],
-        'TEMPLATE_OG_TITLE': '<meta property="og:title" content="{}">'.format(template['title']),
-        'TEMPLATE_META_DESCRIPTION': '<meta name="description" content="{}" property="og:description">'.format(template['description']),
-        'TEMPLATE_NOTE_CONTENT': template['content']
+        'TEMPLATE_TITLE': template.get('title', ''),
+        'TEMPLATE_OG_TITLE': '\n'.join(meta),
+        'TEMPLATE_META_DESCRIPTION': '',  # 已包含在 OG_TITLE 中
+        'TEMPLATE_NOTE_CONTENT': template.get('content', '')
     }
 
     for key, value in replacements.items():
         html = html.replace(key, value)
+
+    # 插入自定义样式
+    if 'customCss' in data:
+        style_tag = f'\n<style>{data["customCss"]}</style>'
+        html = html.replace('</head>', f'{style_tag}\n</head>')
 
     return html
 

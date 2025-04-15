@@ -117,23 +117,15 @@ def register_routes(app):
             title = template['title']
             filename = ''
 
+            # 处理已存在的文件名
             if 'filename' in data:
                 short_code = data['filename']
-                search_glob = 'static/*-{}.html'.format(short_code)
-                search_result = glob.glob(search_glob)
-                if len(search_result) == 1:
-                    filename = search_result[0]
-                    if filename.startswith('static/'):
-                        filename = filename[7:]
-                    if filename.endswith('.html'):
-                        filename = filename[:-5]
-                    logging.info('Using existing filename: %s', filename)
-
-            if not filename:
+                filename = short_code  # 直接使用传入的文件名
+            else:
+                # 生成新的文件名
                 short_code = gen_short_code(title)
                 slug = slugify(title)
                 filename = slug + '-' + short_code
-                logging.info('Generating new filename: %s', filename)
 
             if re.search('[^a-z0-9_-]', filename):
                 logging.error('Invalid note name')
@@ -141,7 +133,7 @@ def register_routes(app):
 
             html = cook_note(data)
 
-            if title.lower() in ['首页', 'share note index']:
+            if title.lower() in ['首页', 'share note index', 'index']:
                 filename = 'index'
 
             file_path = os.path.join('static', filename + '.html')
@@ -153,6 +145,15 @@ def register_routes(app):
 
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(html)
+
+            # 处理相关的附件文件
+            if 'files' in data:
+                for file in data['files']:
+                    if 'hash' in file and 'filetype' in file:
+                        old_path = os.path.join('static', f"{file['hash']}.{file['filetype']}")
+                        new_path = os.path.join('static', file['name'])
+                        if os.path.exists(old_path):
+                            shutil.move(old_path, new_path)
 
             cache_service.delete(f"get_note:{filename}")
             cache_service.delete("get_doc_tree")
