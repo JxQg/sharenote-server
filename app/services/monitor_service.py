@@ -18,6 +18,10 @@ class MonitorService:
         """获取系统状态信息"""
         process = psutil.Process()
         
+        # 获取当前工作目录所在的磁盘
+        current_path = os.path.abspath(os.getcwd())
+        disk_root = os.path.splitdrive(current_path)[0] or '/'
+        
         return {
             'uptime': int(time.time() - self._start_time),
             'cpu_usage': psutil.cpu_percent(interval=1),
@@ -27,10 +31,10 @@ class MonitorService:
                 'percent': psutil.virtual_memory().percent
             },
             'disk_usage': {
-                'total': psutil.disk_usage('/').total,
-                'used': psutil.disk_usage('/').used,
-                'free': psutil.disk_usage('/').free,
-                'percent': psutil.disk_usage('/').percent
+                'total': psutil.disk_usage(disk_root).total,
+                'used': psutil.disk_usage(disk_root).used,
+                'free': psutil.disk_usage(disk_root).free,
+                'percent': psutil.disk_usage(disk_root).percent
             },
             'process': {
                 'cpu_percent': process.cpu_percent(),
@@ -42,16 +46,15 @@ class MonitorService:
         }
         
     @cache(ttl=300)
-    def get_storage_stats(self) -> Dict[str, Any]:
+    def get_storage_stats(self, directory: str = 'static') -> Dict[str, Any]:
         """获取存储统计信息"""
-        static_dir = 'static'
         stats = {
             'total_notes': 0,
             'total_size': 0,
             'by_type': {}
         }
         
-        for root, _, files in os.walk(static_dir):
+        for root, _, files in os.walk(directory):
             for file in files:
                 file_path = os.path.join(root, file)
                 file_size = os.path.getsize(file_path)

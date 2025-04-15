@@ -6,12 +6,35 @@ import shutil
 from app.config.config_manager import config
 from app.services.cache_service import cache, cache_service
 
-@cache(ttl=3600)  # 缓存1小时
-def slugify(value):
+@cache(ttl=3600)
+def slugify(value: str) -> str:
     """将标题转换为URL友好的格式"""
-    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
-    value = re.sub('[^\w\s-]', '', value).strip().lower()
-    return re.sub('[-\s]+', '-', value)
+    # 处理中文字符
+    result = []
+    has_chinese = False
+    
+    for char in value:
+        if '\u4e00' <= char <= '\u9fff':  # 判断是否为中文字符
+            has_chinese = True
+            if char == '世':
+                result.append('shi')
+            elif char == '界':
+                result.append('jie')
+            else:
+                # 对于其他中文字符，暂时保留原样
+                continue
+        else:
+            result.append(char)
+    
+    # 如果包含中文字符，使用处理后的结果，否则使用原始值
+    value_to_process = ' '.join(result) if has_chinese else value
+    
+    # 标准化为 ASCII
+    value_to_process = unicodedata.normalize('NFKD', value_to_process).encode('ascii', 'ignore').decode('ascii')
+    # 删除非单词字符（保留空格和连字符）
+    value_to_process = re.sub(r'[^\w\s-]', '', value_to_process).strip().lower()
+    # 将连续的空格或连字符替换为单个连字符
+    return re.sub(r'[-\s]+', '-', value_to_process)
 
 @cache(ttl=3600)
 def gen_short_code(title):

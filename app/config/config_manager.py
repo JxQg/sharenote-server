@@ -15,8 +15,10 @@ class ConfigManager:
 
     def _load_config(self):
         """加载配置文件并合并环境变量"""
-        # 加载基础配置
-        config_path = os.path.join('config', 'settings.toml')
+        # 获取项目根目录的绝对路径
+        root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        # 使用绝对路径加载配置文件
+        config_path = os.path.join(root_dir, 'config', 'settings.toml')
         try:
             self._config = toml.load(config_path)
         except Exception as e:

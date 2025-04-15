@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
     libc6-dev \
-    wget && \
+    curl && \
     rm -rf /var/lib/apt/lists/*
 
 # 先复制依赖文件，利用缓存
@@ -16,6 +16,12 @@ RUN pip install --user --no-cache-dir -r requirements.txt
 
 FROM python:3.11-slim-bullseye
 WORKDIR /sharenote-server
+
+# 安装curl用于健康检查
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl && \
+    rm -rf /var/lib/apt/lists/*
 
 # 创建非root用户并设置权限
 RUN adduser --system --group --uid 1001 sharenote && \
@@ -42,7 +48,7 @@ USER sharenote
 
 # 添加健康检查
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/ || exit 1
+    CMD curl -f http://localhost:${PORT}/api/system/health || exit 1
 
 EXPOSE ${PORT}
 

@@ -9,19 +9,48 @@ import os
 import re
 import glob
 import json
+import time
+from pathlib import Path
+from werkzeug.utils import secure_filename
+from app.config.config_manager import config
+
+def validate_file_access(filepath):
+    """验证文件访问的安全性"""
+    try:
+        # 确保路径是在static目录下
+        static_path = os.path.abspath('static')
+        file_path = os.path.abspath(filepath)
+        common_prefix = os.path.commonpath([static_path, file_path])
+        return common_prefix == static_path
+    except ValueError:
+        return False
 
 def register_routes(app):
     @app.route('/', methods=['GET'])
-    @cache(ttl=300)  # 缓存首页5分钟
+    @cache(ttl=300)
     def index():
         try:
+            if not validate_file_access('static/index.html'):
+                abort(404)
             return send_file('static/index.html')
         except FileNotFoundError:
             return 'The sharenote-py server is running. To customize this page, upload a note titled <b>Share Note Index</b>.'
+        except Exception as e:
+            logging.error(f"Error serving index: {e}")
+            abort(500)
 
     @app.route('/static/<path:filename>')
     def serve_static(filename):
-        return send_file(f'static/{filename}')
+        file_path = f'static/{filename}'
+        if not validate_file_access(file_path):
+            abort(403)
+        try:
+            return send_file(file_path)
+        except FileNotFoundError:
+            abort(404)
+        except Exception as e:
+            logging.error(f"Error serving static file {filename}: {e}")
+            abort(500)
 
     @app.route('/v1/account/get-key', methods=['GET'])
     def get_key():
@@ -67,80 +96,113 @@ def register_routes(app):
     @app.route('/v1/file/create-note', methods=['POST'])
     @require_auth
     def create_note():
-        data = request.get_json()
-        logging.debug('Note data: %s', json.dumps(data, indent=4))
+        try:
+            if not request.is_json:
+                abort(400, description="Content-Type must be application/json")
+                
+            data = request.get_json()
+            if not data or 'template' not in data:
+                abort(400, description="Invalid request body")
+                
+            template = data.get('template', {})
+            if not isinstance(template, dict) or 'title' not in template:
+                abort(400, description="Invalid template format")
 
-        if data['template'].get('encrypted', False):
-            logging.error('###################################################')
-            logging.error('## Encrypted notes are not implemented yet.      ##')
-            logging.error('## Please disable in Share Note plugin settings. ##')
-            logging.error('###################################################')
-            abort(400)
+            logging.debug('Note data: %s', json.dumps(data, indent=4))
 
-        title = data['template']['title']
-        filename = ''
+            if template.get('encrypted', False):
+                logging.error('Encrypted notes are not implemented yet')
+                abort(400, description="Encrypted notes are not supported")
 
-        if 'filename' in data:
-            short_code = data['filename']
-            search_glob = 'static/*-{}.html'.format(short_code)
-            search_result = glob.glob(search_glob)
-            if len(search_result) == 1:
-                filename = search_result[0]
-                if filename.startswith('static/'):
-                    filename = filename[7:]
-                if filename.endswith('.html'):
-                    filename = filename[:-5]
-                logging.info('Using existing filename: %s', filename)
+            title = template['title']
+            filename = ''
 
-        if not filename:
-            short_code = gen_short_code(title)
-            slug = slugify(title)
-            filename = slug + '-' + short_code
-            logging.info('Generating new filename: %s', filename)
+            if 'filename' in data:
+                short_code = data['filename']
+                search_glob = 'static/*-{}.html'.format(short_code)
+                search_result = glob.glob(search_glob)
+                if len(search_result) == 1:
+                    filename = search_result[0]
+                    if filename.startswith('static/'):
+                        filename = filename[7:]
+                    if filename.endswith('.html'):
+                        filename = filename[:-5]
+                    logging.info('Using existing filename: %s', filename)
 
-        if re.search('[^a-z0-9_-]', filename):
-            logging.error('Invalid note name, aborting')
-            abort(400)
+            if not filename:
+                short_code = gen_short_code(title)
+                slug = slugify(title)
+                filename = slug + '-' + short_code
+                logging.info('Generating new filename: %s', filename)
 
-        html = cook_note(data)
+            if re.search('[^a-z0-9_-]', filename):
+                logging.error('Invalid note name')
+                abort(400, description="Invalid note name")
 
-        # 支持中文"首页"或英文"Share Note Index"作为首页
-        if title.lower() in ['首页', 'share note index']:
-            filename = 'index'
+            html = cook_note(data)
 
-        with open('static/' + filename + '.html', 'w') as f:
-            f.write(html)
+            if title.lower() in ['首页', 'share note index']:
+                filename = 'index'
 
-        # 清除相关缓存
-        cache_service.delete(f"get_note:{filename}")
-        cache_service.delete("get_doc_tree")
+            file_path = os.path.join('static', filename + '.html')
+            if not validate_file_access(file_path):
+                abort(403)
 
-        return dict(success=True, url=app.config['SERVER_URL'] + '/' + filename)
+            # 确保目标目录存在
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(html)
+
+            cache_service.delete(f"get_note:{filename}")
+            cache_service.delete("get_doc_tree")
+
+            return jsonify({
+                'success': True,
+                'url': app.config['SERVER_URL'] + '/' + filename
+            })
+
+        except Exception as e:
+            logging.error(f"Error creating note: {e}")
+            abort(500, description="Internal server error")
 
     @app.route('/v1/file/delete', methods=['POST'])
     @require_auth
     def delete_note():
-        data = request.get_json()
-        filename = data['filename']
+        try:
+            if not request.is_json:
+                abort(400, description="Content-Type must be application/json")
+                
+            data = request.get_json()
+            if not data or 'filename' not in data:
+                abort(400, description="Missing filename parameter")
 
-        if filename == 'index':
-            search_glob = 'static/index.html'
-        else:
-            search_glob = 'static/*-{}.html'.format(data['filename'])
+            filename = data['filename']
+            if not isinstance(filename, str) or not filename:
+                abort(400, description="Invalid filename")
 
-        search_result = glob.glob(search_glob)
+            if filename == 'index':
+                search_glob = 'static/index.html'
+            else:
+                search_glob = 'static/*-{}.html'.format(filename)
 
-        if len(search_result) != 1:
-            abort(404)
+            search_result = glob.glob(search_glob)
+            if len(search_result) != 1:
+                abort(404)
 
-        note = search_result[0]
-        os.remove(note)
+            note_path = search_result[0]
+            if not validate_file_access(note_path):
+                abort(403)
 
-        # 清除相关缓存
-        cache_service.delete(f"get_note:{filename}")
-        cache_service.delete("get_doc_tree")
+            os.remove(note_path)
+            cache_service.delete(f"get_note:{filename}")
+            cache_service.delete("get_doc_tree")
 
-        return dict(success=True)
+            return jsonify({'success': True})
+
+        except Exception as e:
+            logging.error(f"Error deleting note: {e}")
+            abort(500, description="Internal server error")
 
     @app.route('/api/doc-tree', methods=['GET'])
     @cache(ttl=300)  # 缓存文档树5分钟

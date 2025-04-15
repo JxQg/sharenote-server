@@ -10,7 +10,7 @@ secret_api_key = "your-secret-key-here"
 max_upload_size_mb = 16
 
 [files]
-allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "png", "webp", "svg", "ttf", "otf", "woff", "woff2"]
+allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "webp", "svg", "ttf", "otf", "woff", "woff2"]
 watch_paths = ["static", "template"]
 
 [templates]

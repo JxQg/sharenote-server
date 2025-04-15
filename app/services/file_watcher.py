@@ -26,9 +26,13 @@ class FileWatcher:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(FileWatcher, cls).__new__(cls)
-            cls._instance.observer = None
-            cls._instance.watch_paths = set()
         return cls._instance
+
+    def __init__(self):
+        if not hasattr(self, 'observer'):
+            self.observer = None
+        if not hasattr(self, 'watch_paths'):
+            self.watch_paths = set()
     
     def start(self, path='static'):
         """启动文件监控"""
