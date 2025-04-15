@@ -1,6 +1,6 @@
 import os, logging, sys
 from logging.handlers import RotatingFileHandler
-from config.config_manager import config
+from app.config.config_manager import config
 from flask import Flask, jsonify
 from flask_cors import CORS
 from app.routes.note_routes import register_routes

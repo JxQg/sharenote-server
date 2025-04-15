@@ -3,7 +3,7 @@ version: '3.8'
 services:
   sharenote:
     container_name: sharenote
-    image: jxqg597/sharenote-server:1.0.0
+    image: jxqg597/sharenote-server:latest
     ports:
       - "8086:8086"
     volumes:

@@ -3,7 +3,7 @@ import re
 import hashlib
 import os
 import shutil
-from config.config_manager import config
+from app.config.config_manager import config
 from app.services.cache_service import cache, cache_service
 
 @cache(ttl=3600)  # 缓存1小时

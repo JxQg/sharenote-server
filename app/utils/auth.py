@@ -2,7 +2,7 @@ import hashlib
 import hmac
 from functools import wraps
 from flask import request, abort
-from config.config_manager import config
+from app.config.config_manager import config
 
 def get_secure_hash(string, key):
     """使用 HMAC-SHA256 生成安全哈希"""
