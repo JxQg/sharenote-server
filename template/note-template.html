@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEMPLATE_TITLE</title>
+    TEMPLATE_OG_TITLE
+    TEMPLATE_META_DESCRIPTION
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="/static/css/pico.min.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/share-note.css">
+    <link rel="stylesheet" href="/static/css/markdown.css">
+    <script type="module" src="/static/js/app.js"></script>
+</head>
+<body class="mod-linux is-frameless is-hidden-frameless obsidian-app theme-light show-inline-title show-ribbon show-view-header is-focused share-note-plugin">
+    <div class="container">
+        <nav class="nav-sidebar">
+            <div id="doc-tree"></div>
+        </nav>
+        
+        <main class="content">
+            <article class="markdown-body">
+                TEMPLATE_NOTE_CONTENT
+            </article>
+        </main>
+        
+        <aside class="toc-sidebar">
+            <div id="toc"></div>
+        </aside>
+    </div>
+    
+    <button class="mobile-nav-toggle" id="mobileNavToggle">
+        <span>菜单</span>
+    </button>
+
+    <script src="/static/js/modules/toc.js"></script>
+    <script type="module">
+        import { initDocTree } from '/static/js/modules/doc-tree.js';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = generateTOC('.markdown-body');
+            document.getElementById('toc').innerHTML = toc;
+            initDocTree();
+        });
+    </script>
+</body>
+</html>

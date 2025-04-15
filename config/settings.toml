@@ -1,0 +1,23 @@
+[server]
+debug = false
+host = "0.0.0.0"
+port = 5000
+server_url = "http://localhost:5000"
+disable_file_watch = false
+
+[security]
+secret_api_key = "your-secret-key-here"
+max_upload_size_mb = 16
+
+[files]
+allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "png", "webp", "svg", "ttf", "otf", "woff", "woff2"]
+watch_paths = ["static", "template"]
+
+[templates]
+note_template = "template/note-template.html"
+markdown_style = "template/css/markdown.css"
+
+[logging]
+level = "info"
+max_size_mb = 10
+backup_count = 5

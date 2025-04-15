@@ -1,0 +1,15 @@
+.markdown-preview-sizer.markdown-preview-section {
+    max-width: 1080px !important;
+    margin: 0 auto;
+}
+
+.markdown-preview-view {
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.markdown-preview-section {
+    max-width: 1080px;
+    margin: 0 auto;
+}
