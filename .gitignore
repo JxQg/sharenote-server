@@ -154,6 +154,4 @@ secrets.h
 output.*
 out.*
 *.csv
-*.txt
 *.json
-static/
