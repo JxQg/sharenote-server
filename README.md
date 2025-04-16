@@ -32,29 +32,52 @@ secret_api_key = "your-secret-key-here"  # 修改为你的密钥
 max_upload_size_mb = 16
 
 [files]
-allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "webp", "svg", "ttf", "otf", "woff", "woff2"]
+allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "webp", "svg", "ttf", "otf", "woff", "woff2", "js", "ico"]
 ```
 
 2. 使用 docker-compose 部署
 ```yaml
-version: '3.8'
-
 services:
   sharenote:
     container_name: sharenote
-    image: jxqg597/sharenote-server:1.0.0
+    image: jxqg597/sharenote-server:latest
     ports:
       - "8086:8086"
     volumes:
-      - ./static:/sharenote-server/static:ro
+      - ./static:/sharenote-server/static
       - ./config:/sharenote-server/config:ro
       - sharenote_logs:/sharenote-server/logs
     environment:
       - TZ=Asia/Shanghai
+      - PORT=8086
+      - PYTHONPATH=/sharenote-server
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8086/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - sharenote_net
 
 volumes:
   sharenote_logs:
+    name: sharenote_logs
+
+networks:
+  sharenote_net:
+    name: sharenote_net
+    driver: bridge
 ```
 
 3. 启动服务
