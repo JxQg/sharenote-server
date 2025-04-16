@@ -167,7 +167,10 @@ def handle_note_assets(data, filename: str):
                     replacements = [
                         (f"app://{file_hash}", file['url']),
                         (f"file://{file.get('original_path', '')}", file['url']),
-                        (file.get('original_path', ''), file['url'])
+                        (file.get('original_path', ''), file['url']),
+                        # 修复: 增加对根路径图片的替换
+                        (f"/static/{file_hash}.{file_type}", file['url']),
+                        (f"/static/{file_hash}{os.path.splitext(original_name)[1] if original_name else ''}", file['url'])
                     ]
                     for old_path, new_path in replacements:
                         if old_path:
