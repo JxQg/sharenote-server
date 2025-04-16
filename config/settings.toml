@@ -1,16 +1,17 @@
 [server]
-debug = false
+debug = true
 host = "0.0.0.0"
 port = 8086
-server_url = "http://localhost:5000"
+server_url = "http://localhost:8086"
+server_name= "界限墙"
 disable_file_watch = false
 
 [security]
-secret_api_key = "your-secret-key-here"
+secret_api_key = "yoursecretkey"
 max_upload_size_mb = 16
 
 [files]
-allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "webp", "svg", "ttf", "otf", "woff", "woff2"]
+allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "webp", "svg", "ttf", "otf", "woff", "woff2", "js", "ico"]
 watch_paths = ["static", "template"]
 
 [templates]
@@ -18,6 +19,6 @@ note_template = "template/note-template.html"
 markdown_style = "template/css/markdown.css"
 
 [logging]
-level = "info"
+level = "debug"
 max_size_mb = 10
 backup_count = 5

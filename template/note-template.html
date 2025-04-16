@@ -1,48 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- DNS预解析 -->
+    <link rel="dns-prefetch" href="//TEMPLATE_ASSETS_WEBROOT">
+    <!-- 预加载关键CSS -->
+    <link rel="preload" href="/assets/css/layout.css" as="style">
+    <link rel="preload" href="/assets/css/share-note.css" as="style">
+    <link rel="preload" href="/assets/css/markdown.css" as="style">
+    <link rel="preload" href="TEMPLATE_CSS" as="style">
+    <link rel="preload" href="/assets/css/theme.css" as="style">
+    <!-- 预加载关键JS -->
+    <link rel="preload" href="/assets/js/app.js" as="script">
     <title>TEMPLATE_TITLE</title>
     TEMPLATE_OG_TITLE
     TEMPLATE_META_DESCRIPTION
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-    <link rel="stylesheet" href="/static/css/pico.min.css">
-    <link rel="stylesheet" href="/static/css/layout.css">
-    <link rel="stylesheet" href="/static/css/share-note.css">
-    <link rel="stylesheet" href="/static/css/markdown.css">
-    <script type="module" src="/static/js/app.js"></script>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/share-note.css">
+    <link rel="stylesheet" href="/assets/css/markdown.css">
+    <link rel="stylesheet" href="TEMPLATE_CSS">
+    <link rel="stylesheet" href="/assets/css/theme.css">
+    <script type="module" src="/assets/js/app.js"></script>
 </head>
-<body class="mod-linux is-frameless is-hidden-frameless obsidian-app theme-light show-inline-title show-ribbon show-view-header is-focused share-note-plugin">
+<body TEMPLATE_BODY>
     <div class="container">
         <nav class="nav-sidebar">
+            <div class="logo">
+                <a href="/" style="justify-content: center; text-align: center;">
+                    TEMPLATE_SERVER_NAME
+                </a>
+            </div>
             <div id="doc-tree"></div>
         </nav>
         
         <main class="content">
             <article class="markdown-body">
+                <div class="breadcrumbs">
+                    <a href="/" class="home-link" style="justify-content: center;">
+                        首页
+                    </a>
+                    <span class="separator">/</span>
+                    <span class="current">TEMPLATE_TITLE</span>
+                </div>
                 TEMPLATE_NOTE_CONTENT
             </article>
         </main>
         
         <aside class="toc-sidebar">
+            <div class="toc-header">目录</div>
             <div id="toc"></div>
         </aside>
     </div>
     
-    <button class="mobile-nav-toggle" id="mobileNavToggle">
+    <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="导航菜单">
         <span>菜单</span>
     </button>
 
-    <script src="/static/js/modules/toc.js"></script>
-    <script type="module">
-        import { initDocTree } from '/static/js/modules/doc-tree.js';
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const toc = generateTOC('.markdown-body');
-            document.getElementById('toc').innerHTML = toc;
-            initDocTree();
-        });
-    </script>
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
 </body>
 </html>

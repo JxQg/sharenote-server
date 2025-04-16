@@ -1,25 +1,24 @@
 import os, logging, sys
 from logging.handlers import RotatingFileHandler
 from app.config.config_manager import config
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 from app.routes.note_routes import register_routes
 from app.services.file_watcher import file_watcher
 
-# 配置日志
+# 配置日志,简化配置减少内存
 DEBUG = config.get('server.debug', False)
 LOG_DIR = 'logs'
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+os.makedirs(LOG_DIR, exist_ok=True)
 
-# 配置日志格式和处理器
-formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(module)s/%(funcName)s - %(message)s')
+# 精简日志格式
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(module)s - %(message)s')
 
-# 文件处理器 - 按大小轮转
+# 日志文件处理器
 file_handler = RotatingFileHandler(
     os.path.join(LOG_DIR, 'app.log'),
-    maxBytes=10*1024*1024,  # 10MB
-    backupCount=5
+    maxBytes=5*1024*1024,  # 5MB
+    backupCount=3
 )
 file_handler.setFormatter(formatter)
 
@@ -33,44 +32,32 @@ root_logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
 root_logger.addHandler(file_handler)
 root_logger.addHandler(console_handler)
 
-if not config.get('server.server_url'):
-    logging.error('Setting server.server_url unset in settings.toml')
+# 验证必要配置
+if not config.SERVER_URL:
+    logging.error('server.server_url not set in settings.toml')
     sys.exit(1)
 
-HOST = config.get('server.host', '0.0.0.0')
-PORT = config.get('server.port', 5000)
-
+# 初始化应用
 flask_app = Flask(__name__)
 CORS(flask_app)
 
 # 配置应用
-flask_app.config['SERVER_URL'] = config.get('server.server_url')
-flask_app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 限制请求大小为 16MB
-
-# 全局错误处理
-@flask_app.errorhandler(404)
-def not_found_error(error):
-    return jsonify({'error': 'Not Found'}), 404
-
-@flask_app.errorhandler(500)
-def internal_error(error):
-    logging.exception('An internal error occurred')
-    return jsonify({'error': 'Internal Server Error'}), 500
-
-@flask_app.errorhandler(413)
-def request_entity_too_large(error):
-    return jsonify({'error': 'File too large'}), 413
+flask_app.config['SERVER_URL'] = config.SERVER_URL
+flask_app.config['MAX_CONTENT_LENGTH'] = config.get('security.max_upload_size_mb', 16) * 1024 * 1024
 
 # 注册路由
 register_routes(flask_app)
 
-# 启动文件监控
+# 启动文件监控(可选)
 if not config.get('server.disable_file_watch', False):
     file_watcher.start('static')
 
 if __name__ == '__main__':
     try:
-        flask_app.run(host=HOST, port=PORT)
+        flask_app.run(
+            host=config.get('server.host', '0.0.0.0'),
+            port=config.PORT
+        )
     finally:
         file_watcher.stop()
 

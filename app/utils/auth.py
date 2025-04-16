@@ -13,19 +13,17 @@ def get_secure_hash(string, key):
     ).hexdigest()
 
 def check_auth(headers):
-    """验证请求头中的认证信息"""
-    nonce = headers.get('x-sharenote-nonce')
-    key = headers.get('x-sharenote-key')
-    api_key = config.get('security.secret_api_key')
+    """验证请求认证信息,与原版保持一致"""
+    nonce = headers.get('x-sharenote-nonce', '')
+    key = headers.get('x-sharenote-key', '')
+    api_key = nonce + config.get('security.secret_api_key')
     
-    if not all([nonce, key, api_key]):
-        return False
-        
-    expected_key = get_secure_hash(nonce, api_key)
-    return hmac.compare_digest(expected_key, key)
+    hash_object = hashlib.sha256(api_key.encode())
+    digest = hash_object.hexdigest()
+    return digest == key
 
 def require_auth(f):
-    """认证装饰器"""
+    """装饰器:要求认证"""
     @wraps(f)
     def decorated(*args, **kwargs):
         if not check_auth(request.headers):

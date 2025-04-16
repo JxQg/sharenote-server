@@ -2,8 +2,6 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import logging
 import os
-import threading
-import time
 
 class NoteChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
