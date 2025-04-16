@@ -284,27 +284,29 @@
     font-weight: 600;
     text-transform: uppercase;
     color: var(--theme-text);
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem; /* 减小了底部间距 */
+    padding-bottom: 0.5rem; /* 减小了底部内边距 */
     border-bottom: 1px solid var(--theme-border);
     letter-spacing: 0.5px;
 }
 
 .toc-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem 0;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 0 0.25rem 0 !important;
+    line-height: 1.2; /* 添加较小的行高使文本更紧凑 */
 }
 
 .toc-sublist {
-    list-style: none;
-    padding-left: 1.25rem;
-    margin: 0.25rem 0 0.5rem;
-    border-left: 2px solid var(--theme-bg-offset);
+    list-style: none !important;
+    padding-left: 0.5rem !important;
+    margin: 0.1rem 0 0.1rem !important;
+    border-left: 1px solid var(--theme-bg-offset); /* 减小边框宽度 */
 }
 
 .toc-item {
-    margin: 0.25rem 0;
+    margin: 0 !important;
+    padding: 0 !important;
     transition: transform 0.2s;
 }
 
@@ -313,17 +315,29 @@
 }
 
 .toc-link {
-    display: block;
-    padding: 0.35rem 0.5rem;
+    display: block !important;
+    padding: 0.15rem 0.3rem !important;
     color: var(--theme-text-light);
     text-decoration: none;
     font-size: 0.875rem;
     transition: all 0.2s;
-    line-height: 1.4;
-    border-radius: 4px;
+    line-height: 1.3;
+    border-radius: 3px;
+}
+
+.toc-title {
+    display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.toc-indent {
+    margin-right: 0.15rem; /* 减小了右边距 */
+    color: var(--theme-accent);
+    opacity: 0.7;
+    font-family: monospace;
+    font-size: 0.8rem; /* 减小了字体大小 */
 }
 
 .toc-link:hover {
@@ -335,25 +349,84 @@
     color: var(--theme-accent);
     font-weight: 500;
     background-color: var(--theme-bg-offset);
-    border-left: 2px solid var(--theme-accent);
-    margin-left: -0.5rem;
-    padding-left: 0.75rem;
+    border-left: 1px solid var(--theme-accent); /* 减小边框宽度 */
+    margin-left: -0.3rem; /* 减小了左边距 */
+    padding-left: 0.5rem;
 }
 
+/* 层级特定样式 - 使用更具体的选择器确保覆盖其他样式 */
+.toc-link.level-1 { 
+    font-weight: 500;
+    padding-left: 0.3rem !important;
+}
+
+.toc-link.level-2 {
+    padding-left: 0.7rem !important;
+}
+
+.toc-link.level-3 {
+    padding-left: 1.1rem !important;
+    font-size: 0.84rem;
+}
+
+.toc-link.level-4 {
+    padding-left: 1.5rem !important;
+    font-size: 0.82rem;
+    color: var(--theme-text-light);
+}
+
+/* 移除之前可能冲突的样式 */
+.level-1, .level-2, .level-3, .level-4 {
+    padding-left: 0;
+}
+
+/* 确保其他样式不会意外覆盖TOC样式 */
+#toc .toc-list,
+#toc .toc-sublist,
+#toc .toc-item,
+#toc .toc-link {
+    box-sizing: border-box;
+}
+
+/* 改进的层级样式 */
 .level-1 { 
     font-weight: 500;
 }
+
 .level-2 {
-    padding-left: 0.5rem;
+    padding-left: 0.15rem; /* 进一步减小了缩进间距 */
 }
+
 .level-3 {
-    padding-left: 1rem;
-    font-size: 0.85rem;
+    padding-left: 0.3rem; /* 进一步减小了缩进间距 */
+    font-size: 0.84rem; /* 略微减小字体大小 */
 }
+
 .level-4 {
-    padding-left: 1.5rem;
-    font-size: 0.825rem;
+    padding-left: 0.5rem; /* 进一步减小了缩进间距 */
+    font-size: 0.82rem;
     color: var(--theme-text-light);
+}
+
+/* 深度样式，用于增强层级视觉效果 */
+.depth-1 {
+    margin-left: 0;
+}
+
+.depth-2 {
+    border-left-color: var(--theme-accent);
+    border-left-width: 1px;
+}
+
+.depth-3 {
+    border-left-color: var(--theme-border);
+    border-left-width: 1px;
+}
+
+.depth-4 {
+    border-left-style: dotted;
+    border-left-color: var(--theme-text-light);
+    border-left-width: 1px;
 }
 
 /* 移动端样式 */

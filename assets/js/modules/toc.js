@@ -54,7 +54,7 @@ function renderTocList(items, level = 1) {
     if (!items.length) return '';
 
     const list = document.createElement('ul');
-    list.className = 'toc-list';
+    list.className = `toc-list depth-${level}`;
 
     items.forEach(item => {
         const li = document.createElement('li');
@@ -62,8 +62,12 @@ function renderTocList(items, level = 1) {
 
         const link = document.createElement('a');
         link.href = `#${item.id}`;
-        link.className = 'toc-link';
-        link.textContent = item.title;
+        link.className = `toc-link level-${level}`;  // 添加level类到链接
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'toc-title';
+        titleSpan.textContent = item.title;
+        link.appendChild(titleSpan);
         
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -83,7 +87,7 @@ function renderTocList(items, level = 1) {
 
         if (item.children.length) {
             const sublist = renderTocList(item.children, level + 1);
-            sublist.className = 'toc-sublist';
+            sublist.className = `toc-sublist depth-${level + 1}`;
             li.appendChild(sublist);
         }
 
