@@ -4,17 +4,33 @@ import logging
 import os
 
 class NoteChangeHandler(FileSystemEventHandler):
+    def __init__(self, watch_path: str = 'static'):
+        super().__init__()
+        self.watch_path = watch_path
+
     def on_modified(self, event):
         if not event.is_directory and event.src_path.endswith('.html'):
             logging.info(f"检测到文件变更: {event.src_path}")
             self._handle_note_change(event.src_path)
-    
+
+    def on_created(self, event):
+        if not event.is_directory and event.src_path.endswith('.html'):
+            logging.info(f"检测到新文件: {event.src_path}")
+            self._handle_note_change(event.src_path)
+
+    def on_deleted(self, event):
+        if not event.is_directory and event.src_path.endswith('.html'):
+            logging.info(f"检测到文件删除: {event.src_path}")
+            self._handle_note_change(event.src_path)
+
     def _handle_note_change(self, file_path):
-        """处理笔记文件变更"""
+        """处理笔记文件变更：重建搜索索引并清理缓存"""
         try:
-            # 这里可以添加笔记更新后的处理逻辑
-            # 例如：更新搜索索引、清理缓存等
-            logging.info(f"正在处理文件变更: {file_path}")
+            from app.services.search_service import search_service
+            search_service.rebuild_index(self.watch_path)
+            from app.services.cache_service import cache_service
+            cache_service.clear()
+            logging.info(f"文件变更处理完成: {file_path}")
         except Exception as e:
             logging.error(f"处理文件变更时出错: {e}")
 
@@ -41,7 +57,7 @@ class FileWatcher:
             os.makedirs(path)
             
         self.observer = Observer()
-        event_handler = NoteChangeHandler()
+        event_handler = NoteChangeHandler(watch_path=path)
         self.observer.schedule(event_handler, path, recursive=True)
         self.observer.start()
         self.watch_paths.add(path)
@@ -62,7 +78,7 @@ class FileWatcher:
             os.makedirs(path)
             
         if path not in self.watch_paths and self.observer is not None:
-            event_handler = NoteChangeHandler()
+            event_handler = NoteChangeHandler(watch_path=path)
             self.observer.schedule(event_handler, path, recursive=True)
             self.watch_paths.add(path)
             logging.info(f"添加监控路径: {path}")

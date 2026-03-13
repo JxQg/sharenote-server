@@ -2,11 +2,11 @@ import multiprocessing
 import os
 
 # 工作进程数，根据 CPU 核心数动态调整
-workers = int(os.getenv('GUNICORN_WORKERS', multiprocessing.cpu_count() * 2 + 1))
+workers = int(os.getenv('GUNICORN_WORKERS', min(multiprocessing.cpu_count(), 2)))
 
 # 工作模式
 worker_class = 'gevent'  # 使用 gevent 异步工作模式，提高并发性能
-worker_connections = int(os.getenv('GUNICORN_WORKER_CONNECTIONS', '1000'))
+worker_connections = int(os.getenv('GUNICORN_WORKER_CONNECTIONS', '100'))
 
 # 超时设置
 timeout = int(os.getenv('GUNICORN_TIMEOUT', '30'))

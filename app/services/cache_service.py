@@ -30,9 +30,19 @@ class CacheService:
                     logging.debug(f"Cache expired for key: {key}")
             return None
         
+    MAX_ENTRIES = 100
+
+    def _evict_if_needed(self) -> None:
+        """若条目超过上限，删除最早过期的 10 个"""
+        if len(self._cache) >= self.MAX_ENTRIES:
+            oldest = sorted(self._cache.items(), key=lambda kv: kv[1]['expires_at'])[:10]
+            for k, _ in oldest:
+                del self._cache[k]
+
     def set(self, key: str, value: Any, ttl: int = 300) -> None:
         """设置缓存值"""
         with self._lock:
+            self._evict_if_needed()
             if isinstance(value, tuple):
                 content, status_code, headers = value + (None,) * (3 - len(value))
                 self._cache[key] = {

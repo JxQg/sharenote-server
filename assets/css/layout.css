@@ -1,17 +1,8 @@
 :root {
     --sidebar-width: 18rem;
     --content-width: 50rem;
-    --toc-width: 16rem;
     --nav-height: 4rem;
-    --nav-pad-x: 1rem;
     --nav-pad-y: 0.5rem;
-    --theme-accent: #8D46E7;
-    --theme-accent-secondary: #6E35C1;
-    --theme-text: #1E1E1E;
-    --theme-text-light: #666666;
-    --theme-bg: #FFFFFF;
-    --theme-bg-offset: #F8F9FA;
-    --theme-border: #E2E8F0;
     --nav-width: 280px;
     --toc-width: 240px;
     --nav-pad-x: 1.5rem;
@@ -52,24 +43,16 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: var(--sidebar-width) minmax(0, var(--content-width)) var(--toc-width);
+    grid-template-columns: var(--nav-width) 1fr var(--toc-width);
     gap: 1rem;
     min-height: 100vh;
     width: 100%;
-    max-width: calc(var(--sidebar-width) + var(--content-width) + var(--toc-width) + 4rem);
+    max-width: calc(var(--nav-width) + var(--content-width) + var(--toc-width) + 4rem);
     margin: 0 auto;
     padding: 0 1rem;
-    grid-template-columns: var(--nav-width) 1fr var(--toc-width);
-    min-height: 100vh;
 }
 
 .nav-sidebar {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    padding: var(--nav-pad-y) var(--nav-pad-x);
-    border-right: 1px solid var(--theme-border);
     position: fixed;
     left: 0;
     top: 0;
@@ -92,12 +75,6 @@ body {
 }
 
 .toc-sidebar {
-    position: sticky;
-    top: 0;
-    height: calc(100vh - var(--nav-height));
-    overflow-y: auto;
-    padding: var(--nav-pad-y) var(--nav-pad-x);
-    border-left: 1px solid var(--theme-border);
     position: fixed;
     right: 0;
     top: 0;
@@ -155,7 +132,7 @@ body {
     display: none;
     position: fixed;
     bottom: 1rem;
-    right: 1rem;
+    left: 1rem;
     z-index: 1001;
     background: var(--theme-accent);
     color: white;
@@ -166,11 +143,6 @@ body {
     font-size: 1.2rem;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    display: none;
-    position: fixed;
-    bottom: 1rem;
-    left: 1rem;
-    z-index: 1000;
 }
 
 .mobile-nav-toggle:hover {

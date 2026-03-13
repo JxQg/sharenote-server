@@ -77,25 +77,44 @@
 
 .markdown-body code {
     background-color: var(--theme-code-inline-bg, var(--theme-bg-offset));
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
     font-size: 0.875em;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
     color: var(--theme-code-color, var(--theme-text));
+    border: 1px solid var(--theme-border);
 }
 
 .markdown-body pre {
+    position: relative;
     background-color: var(--theme-code-bg);
     border-radius: 6px;
-    padding: 1rem;
+    padding: 1.25rem 1rem 1rem;
     overflow-x: auto;
     border: 1px solid var(--theme-border);
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.markdown-body pre[class*="language-"]::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.1em 0.6em;
+    font-size: 0.75em;
+    color: var(--theme-text-light);
+    background: var(--theme-border);
+    border-radius: 0 6px 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .markdown-body pre code {
     background-color: transparent;
     padding: 0;
-    font-size: 0.875em;
+    border: none;
+    font-size: inherit;
     color: var(--theme-code-color, inherit);
 }
 
@@ -172,20 +191,75 @@
     background-color: var(--theme-callout-bg);
 }
 
-.markdown-body .callout.tip {
-    border-left-color: var(--theme-accent);
-}
-
+.markdown-body .callout.note,
 .markdown-body .callout.info {
-    border-left-color: var(--theme-accent-secondary, var(--theme-accent));
+    border-left-color: #0ea5e9;
+    background-color: rgba(14, 165, 233, 0.08);
 }
 
-.markdown-body .callout.warning {
-    border-left-color: #FFA91F;
+.markdown-body .callout.tip,
+.markdown-body .callout.hint {
+    border-left-color: var(--theme-accent);
+    background-color: rgba(141, 70, 231, 0.08);
 }
 
-.markdown-body .callout.error {
-    border-left-color: #FF3E3E;
+.markdown-body .callout.abstract,
+.markdown-body .callout.summary,
+.markdown-body .callout.tldr {
+    border-left-color: #06b6d4;
+    background-color: rgba(6, 182, 212, 0.08);
+}
+
+.markdown-body .callout.todo {
+    border-left-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.08);
+}
+
+.markdown-body .callout.success,
+.markdown-body .callout.check,
+.markdown-body .callout.done {
+    border-left-color: #10b981;
+    background-color: rgba(16, 185, 129, 0.08);
+}
+
+.markdown-body .callout.question,
+.markdown-body .callout.help,
+.markdown-body .callout.faq {
+    border-left-color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.08);
+}
+
+.markdown-body .callout.warning,
+.markdown-body .callout.caution,
+.markdown-body .callout.attention,
+.markdown-body .callout.important {
+    border-left-color: #f97316;
+    background-color: rgba(249, 115, 22, 0.08);
+}
+
+.markdown-body .callout.error,
+.markdown-body .callout.danger,
+.markdown-body .callout.failure,
+.markdown-body .callout.fail,
+.markdown-body .callout.missing {
+    border-left-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.08);
+}
+
+.markdown-body .callout.bug {
+    border-left-color: #dc2626;
+    background-color: rgba(220, 38, 38, 0.08);
+}
+
+.markdown-body .callout.example {
+    border-left-color: #8b5cf6;
+    background-color: rgba(139, 92, 246, 0.08);
+}
+
+.markdown-body .callout.quote,
+.markdown-body .callout.cite {
+    border-left-color: #6b7280;
+    background-color: rgba(107, 114, 128, 0.08);
 }
 
 /* 适应深色/浅色主题的代码块和引用 */

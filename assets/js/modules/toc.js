@@ -97,24 +97,27 @@ function renderTocList(items, level = 1) {
     return list;
 }
 
-function updateActiveHeading() {
+// 缓存变量，避免每次滚动重新查询 DOM
+let _headingPositions = [];
+let _tocLinks = [];
+let _tocContainer = null;
+
+function buildHeadingPositions() {
     const headings = Array.from(document.querySelectorAll(TOC_CONFIG.headingSelector))
         .filter(h => !h.closest(TOC_CONFIG.ignoreSelector));
-    
-    // 提前退出如果没有标题
-    if (!headings.length) return;
-
-    // 计算每个标题的位置
-    const headingPositions = headings.map(heading => ({
+    _headingPositions = headings.map(heading => ({
         id: heading.id,
         top: heading.offsetTop - TOC_CONFIG.scrollOffset - 10
     }));
+}
 
-    // 找到当前视窗中最接近顶部的标题
+function updateActiveHeading() {
+    if (!_headingPositions.length) return;
+
     const scrollPosition = window.scrollY;
-    let currentHeading = headingPositions[0];
+    let currentHeading = _headingPositions[0];
 
-    for (const heading of headingPositions) {
+    for (const heading of _headingPositions) {
         if (scrollPosition >= heading.top) {
             currentHeading = heading;
         } else {
@@ -122,22 +125,15 @@ function updateActiveHeading() {
         }
     }
 
-    // 更新活动状态
-    document.querySelectorAll('.toc-link').forEach(link => {
+    _tocLinks.forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${currentHeading.id}`) {
             link.classList.add('active');
-            // 确保活动项在视图中
-            const tocContainer = document.querySelector('.toc-sidebar');
-            if (tocContainer) {
+            if (_tocContainer) {
                 const linkRect = link.getBoundingClientRect();
-                const containerRect = tocContainer.getBoundingClientRect();
-                
+                const containerRect = _tocContainer.getBoundingClientRect();
                 if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
-                    link.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
+                    link.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         }
@@ -164,6 +160,14 @@ export function initTOC() {
     if (tocContainer) {
         tocContainer.appendChild(renderTocList(tocTree));
     }
+
+    // 缓存 DOM 引用，供滚动回调使用
+    _tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+    _tocContainer = document.querySelector('.toc-sidebar');
+    buildHeadingPositions();
+
+    // 窗口尺寸变化时重建位置缓存
+    window.addEventListener('resize', buildHeadingPositions);
 
     // 监听滚动事件来更新活动标题
     let scrollTimeout;
