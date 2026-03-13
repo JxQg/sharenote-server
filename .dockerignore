@@ -1,4 +1,45 @@
+# Git
 .git
+.gitignore
+.gitattributes
+
+# Python 缓存
 __pycache__/
-*.log
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# 虚拟环境
 venv/
+.venv/
+env/
+
+# 测试
+tests/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# 日志
+*.log
+logs/
+
+# 构建产物
+*.egg-info/
+dist/
+build/
+
+# 开发工具
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# 开发依赖文件
+requirements-dev.txt
+
+# 文档（不影响功能）
+README.md
+LICENSE

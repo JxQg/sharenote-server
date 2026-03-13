@@ -5,7 +5,8 @@ import os
 workers = int(os.getenv('GUNICORN_WORKERS', min(multiprocessing.cpu_count(), 2)))
 
 # 工作模式
-worker_class = 'gevent'  # 使用 gevent 异步工作模式，提高并发性能
+worker_class = 'gthread'  # 使用线程模式，无需 gevent 依赖
+threads = int(os.getenv('GUNICORN_THREADS', '4'))
 worker_connections = int(os.getenv('GUNICORN_WORKER_CONNECTIONS', '100'))
 
 # 超时设置
