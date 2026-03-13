@@ -42,14 +42,9 @@ body {
 }
 
 .container {
-    display: grid;
-    grid-template-columns: var(--nav-width) 1fr var(--toc-width);
-    gap: 1rem;
     min-height: 100vh;
-    width: 100%;
-    max-width: calc(var(--nav-width) + var(--content-width) + var(--toc-width) + 4rem);
-    margin: 0 auto;
-    padding: 0 1rem;
+    margin-left: var(--nav-width);
+    margin-right: var(--toc-width);
 }
 
 .nav-sidebar {
@@ -59,19 +54,19 @@ body {
     width: var(--nav-width);
     height: 100vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--theme-bg);
     border-right: 1px solid var(--theme-border);
     padding: 1rem 0;
+    z-index: 100;
 }
 
 .content {
-    padding: 2rem;
-    min-width: 0;
     max-width: var(--content-width);
-    overflow-wrap: break-word;
-    grid-column: 2;
-    max-width: 100%;
+    margin: 0 auto;
     padding: 2rem var(--nav-pad-x);
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 
 .toc-sidebar {
@@ -81,9 +76,11 @@ body {
     width: var(--toc-width);
     height: 100vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--theme-bg);
     border-left: 1px solid var(--theme-border);
     padding: 2rem var(--nav-pad-x);
+    z-index: 100;
 }
 
 #toc {
@@ -155,9 +152,9 @@ body {
 
 @media (max-width: 1200px) {
     .container {
-        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+        margin-right: 0;
     }
-    
+
     .toc-sidebar {
         display: none;
     }
@@ -165,26 +162,21 @@ body {
 
 @media (max-width: 768px) {
     .container {
-        grid-template-columns: 1fr;
+        margin-left: 0;
+        margin-right: 0;
     }
-    
+
     .nav-sidebar {
-        position: fixed;
-        left: -100%;
         width: 100%;
         max-width: 300px;
-        transition: left 0.3s ease;
-        background: var(--theme-bg);
-        z-index: 1000;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
-    
+
     .nav-sidebar.show {
-        left: 0;
         transform: translateX(0);
     }
-    
+
     .mobile-nav-toggle {
         display: block;
     }
@@ -194,12 +186,7 @@ body {
     }
 
     .content {
-        grid-column: 1;
         padding: 1rem;
-    }
-
-    .mobile-nav-toggle {
-        display: block;
     }
 }
 

@@ -2,6 +2,7 @@
 import { initTOC } from './modules/toc.js';
 import { initDocTree } from './modules/doc-tree.js';
 import { initCallouts } from './modules/callout.js';
+import { initTheme } from './modules/theme.js';
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
@@ -103,8 +104,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         heading.appendChild(anchor);
     });
 
-    // 应用明亮模式
-    document.documentElement.dataset.theme = 'light';
-    document.documentElement.classList.add('theme-light');
-    document.documentElement.classList.remove('theme-dark');
+    // 初始化主题（跟随系统偏好或用户上次选择）
+    initTheme();
 });
