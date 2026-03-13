@@ -53,7 +53,10 @@
 }
 
 html, body {
-    overflow: visible !important;
+    /* 覆盖 Obsidian 主题中可能设置的 overflow:hidden，确保页面可正常上下滚动 */
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    height: auto !important;
 }
 
 body {
@@ -61,8 +64,15 @@ body {
     background-color: var(--theme-bg);
 }
 
-.view-content {
-    height: 100% !important;
+/* 覆盖 Obsidian 内容容器的 overflow/height 限制，防止内容无法滚动 */
+.markdown-preview-view,
+.markdown-preview-sizer,
+.markdown-preview-section,
+.view-content,
+.workspace-leaf-content {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
 }
 
 .my-status-bar {

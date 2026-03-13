@@ -139,42 +139,54 @@ def handle_note_assets(data, filename: str):
             original_name = file.get('name', '')
             file_hash = file['hash']
             file_type = file['filetype']
-            safe_name = f"{file_hash}{os.path.splitext(original_name)[1]}" if original_name else f"{file_hash}.{file_type}"
-            
-            # 检查文件是否已经在笔记目录中
+            orig_ext = os.path.splitext(original_name)[1] if original_name else ''
+            safe_name = f"{file_hash}{orig_ext}" if orig_ext else f"{file_hash}.{file_type}"
+
+            # 目标路径：笔记专属资源目录
             target_path = os.path.join(assets_path, safe_name)
+
             if not os.path.exists(target_path):
-                # 如果不在笔记目录中，检查是否在临时目录
+                # 1. 优先检查根 static 目录（无 note_id 的上传落在此处）
+                moved_from = None
                 temp_path = os.path.join('static', f"{file_hash}.{file_type}")
                 if os.path.exists(temp_path):
+                    moved_from = temp_path
+                else:
+                    # 2. 搜索其他笔记目录（有 note_id 头的上传可能落在不同子目录）
+                    import glob as _glob
+                    found = _glob.glob(f'static/notes/*/assets/{file_hash}.*')
+                    if found:
+                        moved_from = found[0]
+
+                if moved_from:
                     try:
-                        # 确保目标目录存在
                         os.makedirs(os.path.dirname(target_path), exist_ok=True)
-                        # 移动文件到笔记目录
-                        shutil.move(temp_path, target_path)
-                        logging.info(f"Successfully moved file from {temp_path} to {target_path}")
+                        shutil.move(moved_from, target_path)
+                        logging.info(f"Moved asset from {moved_from} to {target_path}")
                     except Exception as e:
-                        logging.error(f"Error moving file {temp_path}: {e}")
+                        logging.error(f"Error moving asset {moved_from}: {e}")
                         continue
-            
-            # 更新文件URL
+
+            # 更新文件 URL（统一指向笔记专属目录）
             file['url'] = f"/static/notes/{filename}/assets/{safe_name}"
-            
-            # 如果是图片，更新文档中的引用
-            if file_type.lower() in ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg']:
-                if 'content' in data['template']:
-                    # 更新各种可能的图片引用格式
-                    replacements = [
-                        (f"app://{file_hash}", file['url']),
-                        (f"file://{file.get('original_path', '')}", file['url']),
-                        (file.get('original_path', ''), file['url']),
-                        # 修复: 增加对根路径图片的替换
-                        (f"/static/{file_hash}.{file_type}", file['url']),
-                        (f"/static/{file_hash}{os.path.splitext(original_name)[1] if original_name else ''}", file['url'])
-                    ]
-                    for old_path, new_path in replacements:
-                        if old_path:
-                            data['template']['content'] = data['template']['content'].replace(old_path, new_path)
+
+            # 更新文档内容中所有可能的旧引用格式
+            if 'content' in data['template']:
+                replacements = [
+                    # Obsidian 内部 URI（带扩展名 / 不带扩展名 / 带原始扩展名）
+                    (f"app://{file_hash}.{file_type}", file['url']),
+                    (f"app://{file_hash}{orig_ext}", file['url']),
+                    (f"app://{file_hash}", file['url']),
+                    # 本地文件 URI
+                    (f"file://{file.get('original_path', '')}", file['url']),
+                    (file.get('original_path', ''), file['url']),
+                    # 服务器根 static 路径
+                    (f"/static/{file_hash}.{file_type}", file['url']),
+                    (f"/static/{safe_name}", file['url']),
+                ]
+                for old_path, new_path in replacements:
+                    if old_path and old_path != new_path:
+                        data['template']['content'] = data['template']['content'].replace(old_path, new_path)
 
     # 清理旧资源
     if update_mode and os.path.exists(note_file):
@@ -214,9 +226,9 @@ def handle_note_assets(data, filename: str):
                 if ext == '.html' or f == 'theme.css':
                     continue
                 
-                # 尝试从文件名中提取哈希值
+                # 尝试从文件名中提取哈希值（兼容 SHA-1/SHA-256/MD5 等各种长度）
                 name_without_ext = os.path.splitext(f)[0]
-                if re.match(r'^[a-f0-9]{40}$', name_without_ext):
+                if re.match(r'^[a-f0-9]{8,}$', name_without_ext):
                     target_path = os.path.join(assets_path, f)
                     try:
                         # 确保目标目录存在
