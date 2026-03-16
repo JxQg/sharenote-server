@@ -167,8 +167,8 @@ def handle_note_assets(data, filename: str):
                         logging.error(f"Error moving asset {moved_from}: {e}")
                         continue
 
-            # 更新文件 URL（统一指向笔记专属目录）
-            file['url'] = f"/static/notes/{filename}/assets/{safe_name}"
+            # 更新文件 URL（使用相对路径，相对于 static/{filename}.html）
+            file['url'] = f"notes/{filename}/assets/{safe_name}"
 
             # 更新文档内容中所有可能的旧引用格式
             if 'content' in data['template']:
@@ -193,10 +193,17 @@ def handle_note_assets(data, filename: str):
         try:
             with open(note_file, 'r', encoding='utf-8') as f:
                 old_content = f.read()
-                # 从旧文档中提取图片资源路径
+                # 从旧文档中提取图片资源路径（支持相对路径和绝对路径）
                 old_assets = set()
                 for line in old_content.split('\n'):
-                    if 'src="/static/notes/' in line:
+                    # 匹配相对路径 src="notes/{filename}/assets/
+                    if f'src="notes/{filename}/assets/' in line:
+                        start = line.find('src="') + 5
+                        end = line.find('"', start)
+                        if start > 4 and end > start:
+                            old_assets.add(line[start:end])
+                    # 兼容旧的绝对路径格式
+                    elif 'src="/static/notes/' in line:
                         start = line.find('src="') + 5
                         end = line.find('"', start)
                         if start > 4 and end > start:
@@ -206,7 +213,13 @@ def handle_note_assets(data, filename: str):
                 new_content = data['template']['content']
                 for old_asset in old_assets:
                     if old_asset not in new_content:
-                        asset_path = os.path.join('static', old_asset.lstrip('/'))
+                        # 处理相对路径和绝对路径
+                        if old_asset.startswith('/'):
+                            asset_path = os.path.join('static', old_asset.lstrip('/'))
+                        else:
+                            # 相对路径，相对于 static/ 目录
+                            asset_path = os.path.join('static', old_asset)
+
                         if os.path.exists(asset_path):
                             try:
                                 os.remove(asset_path)
@@ -236,10 +249,10 @@ def handle_note_assets(data, filename: str):
                         # 移动文件到笔记目录
                         shutil.move(file_path, target_path)
                         logging.info(f"Migrated file from {file_path} to {target_path}")
-                        # 更新文档中的引用
+                        # 更新文档中的引用（使用相对路径）
                         if 'content' in data['template']:
                             old_url = f"/static/{f}"
-                            new_url = f"/static/notes/{filename}/assets/{f}"
+                            new_url = f"notes/{filename}/assets/{f}"
                             data['template']['content'] = data['template']['content'].replace(old_url, new_url)
                     except Exception as e:
                         logging.error(f"Error migrating file {file_path}: {e}")
@@ -319,7 +332,8 @@ def convert_obsidian_images(content: str, doc_filename: str) -> str:
         # 构建新的资源路径
         assets_path = os.path.join('static', 'notes', doc_filename, 'assets')
         new_file_path = os.path.join(assets_path, img_filename)
-        web_path = f'/static/notes/{doc_filename}/assets/{img_filename}'
+        # 使用相对路径（相对于 static/{doc_filename}.html）
+        web_path = f'notes/{doc_filename}/assets/{img_filename}'
         
         # 尝试多个位置查找原始文件
         possible_paths = [
