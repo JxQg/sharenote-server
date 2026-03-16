@@ -189,33 +189,24 @@
 /* 卡片 3D 倾斜 */
 .markdown-body .callout {
     perspective: 1000px;
-    transform-style: preserve-3d;
-    /* GPU 加速 */
-    transform: translateZ(0);
 }
 
 .markdown-body .callout:hover {
-    transform: translateY(-4px) rotateX(2deg) translateZ(0);
+    transform: translateY(-4px) rotateX(2deg);
 }
 
 /* 代码块 3D 效果 */
 .markdown-body pre {
     perspective: 1000px;
-    transform-style: preserve-3d;
-    /* GPU 加速 */
-    transform: translateZ(0);
 }
 
 /* 表格 3D 效果 */
 .markdown-body table {
     perspective: 1000px;
-    transform-style: preserve-3d;
-    /* GPU 加速 */
-    transform: translateZ(0);
 }
 
 .markdown-body table:hover {
-    transform: translateY(-2px) rotateX(1deg) translateZ(0);
+    transform: translateY(-2px) rotateX(1deg);
 }
 
 /* ========== 按钮波纹效果 ========== */
@@ -317,22 +308,9 @@ body::before {
 
 /* ========== 滚动性能优化 ========== */
 
-/* 使用 will-change 提示浏览器优化 */
-.markdown-body h1,
-.markdown-body h2,
-.markdown-body h3,
-.markdown-body p,
-.markdown-body .callout,
-.markdown-body pre,
-.markdown-body table {
-    will-change: opacity, transform;
-}
-
 /* 动画完成后移除 will-change */
 .markdown-body .animate-in {
     will-change: auto;
-    /* 确保 GPU 加速的属性 */
-    transform: translateZ(0);
 }
 
 /* ========== 移动端优化 ========== */
