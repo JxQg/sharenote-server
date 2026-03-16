@@ -73,7 +73,11 @@ function renderTocList(items, level = 1) {
             e.preventDefault();
             const target = document.getElementById(item.id);
             if (target) {
-                const top = target.offsetTop - TOC_CONFIG.scrollOffset;
+                // 使用 getBoundingClientRect 获取准确位置
+                const targetRect = target.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const top = targetRect.top + scrollTop - TOC_CONFIG.scrollOffset;
+
                 window.scrollTo({
                     top,
                     behavior: TOC_CONFIG.scrollSmooth ? 'smooth' : 'auto'
@@ -105,10 +109,14 @@ let _tocContainer = null;
 function buildHeadingPositions() {
     const headings = Array.from(document.querySelectorAll(TOC_CONFIG.headingSelector))
         .filter(h => !h.closest(TOC_CONFIG.ignoreSelector));
-    _headingPositions = headings.map(heading => ({
-        id: heading.id,
-        top: heading.offsetTop - TOC_CONFIG.scrollOffset - 10
-    }));
+    _headingPositions = headings.map(heading => {
+        const rect = heading.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        return {
+            id: heading.id,
+            top: rect.top + scrollTop - TOC_CONFIG.scrollOffset - 10
+        };
+    });
 }
 
 function updateActiveHeading() {

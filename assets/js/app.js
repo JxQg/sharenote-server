@@ -199,7 +199,7 @@ function initBackToTop() {
 
     // 显示/隐藏按钮
     function toggleBackToTop() {
-        if (window.pageYOffset > 300) {
+        if (window.pageYOffset > 200) {
             backToTopBtn.classList.add('show');
         } else {
             backToTopBtn.classList.remove('show');
