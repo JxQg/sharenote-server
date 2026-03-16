@@ -150,6 +150,25 @@ def init_routes(limiter=None):
             logging.error(f"Error serving static file {filename}: {e}")
             abort(500)
 
+    @views_bp.route('/notes/<doc_id>/assets/<path:filename>')
+    def serve_note_assets(doc_id, filename):
+        """服务笔记资源文件"""
+        try:
+            # 验证 doc_id 格式
+            if re.search('[^a-z0-9_-]', doc_id):
+                abort(404)
+
+            file_path = os.path.join('static', 'notes', doc_id, 'assets', filename)
+            if not validate_file_access(file_path):
+                abort(403)
+            # 设置长期缓存（1年）用于笔记资源
+            return send_file(file_path, max_age=31536000, conditional=True)
+        except FileNotFoundError:
+            abort(404)
+        except Exception as e:
+            logging.error(f"Error serving note asset {doc_id}/{filename}: {e}")
+            abort(500)
+
     @views_bp.route('/<nid>', methods=['GET'])
     @cache(ttl=300)
     def get_note(nid):

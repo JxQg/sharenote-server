@@ -58,7 +58,6 @@ body {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 .content {
@@ -80,7 +79,6 @@ body {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
 }
 
 #toc {
