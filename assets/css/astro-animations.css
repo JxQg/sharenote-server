@@ -1,0 +1,367 @@
+/* Astro 风格动画效果 */
+
+/* ========== 页面加载动画 ========== */
+
+/* 内容淡入动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 侧边栏滑入动画 */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Logo 旋转动画 */
+@keyframes logoSpin {
+    from {
+        transform: rotate(0deg) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: rotate(360deg) scale(1);
+        opacity: 1;
+    }
+}
+
+/* 渐变流动动画 */
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ========== 应用加载动画 ========== */
+
+.nav-sidebar {
+    animation: slideInLeft 0.6s var(--transition-timing) both;
+    will-change: transform, opacity;
+}
+
+.toc-sidebar {
+    animation: slideInRight 0.6s var(--transition-timing) both;
+    animation-delay: 0.1s;
+    will-change: transform, opacity;
+}
+
+.content {
+    animation: fadeIn 0.8s var(--transition-timing) both;
+    animation-delay: 0.2s;
+    will-change: transform, opacity;
+}
+
+.logo {
+    animation: logoSpin 0.8s var(--transition-timing) both;
+    will-change: transform, opacity;
+}
+
+/* 动画完成后移除 will-change */
+.nav-sidebar,
+.toc-sidebar,
+.content,
+.logo {
+    animation-fill-mode: forwards;
+}
+
+@keyframes removeWillChange {
+    to {
+        will-change: auto;
+    }
+}
+
+.nav-sidebar {
+    animation: slideInLeft 0.6s var(--transition-timing) both,
+               removeWillChange 0s 0.6s forwards;
+}
+
+.toc-sidebar {
+    animation: slideInRight 0.6s var(--transition-timing) both,
+               removeWillChange 0s 0.7s forwards;
+}
+
+.content {
+    animation: fadeIn 0.8s var(--transition-timing) both,
+               removeWillChange 0s 1s forwards;
+}
+
+.logo {
+    animation: logoSpin 0.8s var(--transition-timing) both,
+               removeWillChange 0s 0.8s forwards;
+}
+
+/* ========== 滚动动画 ========== */
+
+/* 标题滚动进入动画 */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s var(--transition-timing),
+                transform 0.6s var(--transition-timing);
+}
+
+.markdown-body h1.animate-in,
+.markdown-body h2.animate-in,
+.markdown-body h3.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 段落和列表滚动进入 */
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body blockquote,
+.markdown-body pre,
+.markdown-body table,
+.markdown-body .callout {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s var(--transition-timing),
+                transform 0.5s var(--transition-timing);
+}
+
+.markdown-body p.animate-in,
+.markdown-body ul.animate-in,
+.markdown-body ol.animate-in,
+.markdown-body blockquote.animate-in,
+.markdown-body pre.animate-in,
+.markdown-body table.animate-in,
+.markdown-body .callout.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ========== 3D 悬停效果 ========== */
+
+/* 卡片 3D 倾斜 */
+.markdown-body .callout {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    /* GPU 加速 */
+    transform: translateZ(0);
+}
+
+.markdown-body .callout:hover {
+    transform: translateY(-4px) rotateX(2deg) translateZ(0);
+}
+
+/* 代码块 3D 效果 */
+.markdown-body pre {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    /* GPU 加速 */
+    transform: translateZ(0);
+}
+
+/* 表格 3D 效果 */
+.markdown-body table {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    /* GPU 加速 */
+    transform: translateZ(0);
+}
+
+.markdown-body table:hover {
+    transform: translateY(-2px) rotateX(1deg) translateZ(0);
+}
+
+/* ========== 按钮波纹效果 ========== */
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.copy-code-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.copy-code-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
+}
+
+.copy-code-button:active::after {
+    animation: ripple 0.6s ease-out;
+}
+
+/* ========== 链接波纹效果 ========== */
+
+.markdown-body a {
+    position: relative;
+    overflow: hidden;
+}
+
+.markdown-body a::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(50, 69, 255, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.markdown-body a:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ========== 主题切换动画 ========== */
+
+/* 平滑过渡所有颜色 */
+body,
+.nav-sidebar,
+.toc-sidebar,
+.content,
+.markdown-body *,
+.copy-code-button {
+    transition: background-color var(--transition-speed) var(--transition-timing),
+                color var(--transition-speed) var(--transition-timing),
+                border-color var(--transition-speed) var(--transition-timing),
+                box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+/* 背景渐变平滑切换 */
+body::before {
+    transition: background var(--transition-speed-slow) var(--transition-timing);
+}
+
+/* ========== 渐变动画效果 ========== */
+
+/* 标题渐变流动 */
+.markdown-body h1 {
+    background-size: 200% 200%;
+    animation: gradientFlow 3s ease infinite;
+}
+
+/* 链接渐变流动 */
+.markdown-body a {
+    background-size: 200% 200%;
+}
+
+.markdown-body a:hover {
+    animation: gradientFlow 2s ease infinite;
+}
+
+/* ========== 滚动性能优化 ========== */
+
+/* 使用 will-change 提示浏览器优化 */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body p,
+.markdown-body .callout,
+.markdown-body pre,
+.markdown-body table {
+    will-change: opacity, transform;
+}
+
+/* 动画完成后移除 will-change */
+.markdown-body .animate-in {
+    will-change: auto;
+    /* 确保 GPU 加速的属性 */
+    transform: translateZ(0);
+}
+
+/* ========== 移动端优化 ========== */
+
+@media (max-width: 768px) {
+    /* 减少动画复杂度 */
+    .markdown-body .callout:hover {
+        transform: translateY(-2px);
+    }
+
+    .markdown-body table:hover {
+        transform: translateY(-1px);
+    }
+
+    /* 禁用 3D 效果 */
+    .markdown-body .callout,
+    .markdown-body pre,
+    .markdown-body table {
+        perspective: none;
+        transform-style: flat;
+    }
+
+    /* 简化页面加载动画 */
+    .nav-sidebar,
+    .toc-sidebar,
+    .content {
+        animation-duration: 0.4s;
+    }
+}
+
+/* ========== 减少动画偏好 ========== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body p,
+    .markdown-body .callout,
+    .markdown-body pre,
+    .markdown-body table {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

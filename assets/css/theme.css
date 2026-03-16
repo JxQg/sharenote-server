@@ -1,55 +1,110 @@
 :root {
-    --primary-color: #4a5568;
-    --secondary-color: #2d3748;
-    --background-color: #ffffff;
-    --border-color: #e2e8f0;
-    --hover-color: #edf2f7;
-    --text-color: #2d3748;
-    --sidebar-width: 280px;
+    /* Astro 核心色彩 */
+    --astro-accent-blue: #3245ff;
+    --astro-accent-purple: #bc52ee;
+    --astro-bg-primary: #0d0f14;
+    --astro-bg-secondary: #17181c;
+    --astro-bg-tertiary: #23262f;
+    --astro-glass-bg: rgba(44, 44, 44, 0.3);
+    --astro-glass-border: rgba(255, 255, 255, 0.1);
 
-    /* 明亮主题变量 */
-    --theme-accent: #8d46e7;
-    --theme-text-accent: #8d46e7;
-    --theme-text: #374151;
-    --theme-text-light: #6b7280;
+    /* Astro 渐变 */
+    --astro-gradient-primary: linear-gradient(135deg, #3245ff 0%, #bc52ee 100%);
+    --astro-gradient-subtle: linear-gradient(135deg, rgba(50, 69, 255, 0.1) 0%, rgba(188, 82, 238, 0.1) 100%);
+    --astro-gradient-bg: radial-gradient(ellipse at top, rgba(50, 69, 255, 0.15), transparent 50%);
+
+    /* Astro 阴影 */
+    --astro-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --astro-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --astro-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+    --astro-shadow-glow: 0 0 24px rgba(188, 82, 238, 0.3);
+    --astro-shadow-glow-blue: 0 0 24px rgba(50, 69, 255, 0.3);
+
+    /* 浅色主题变量 */
+    --theme-accent: #3245ff;
+    --theme-accent-secondary: #bc52ee;
+    --theme-text-accent: #3245ff;
+    --theme-text: #1a1a1a;
+    --theme-text-light: #64748b;
+    --theme-text-lighter: #94a3b8;
     --theme-bg: #ffffff;
-    --theme-bg-subtle: #f3f4f6;
-    --theme-bg-offset: #f9fafb;
-    --theme-border: #e5e7eb;
+    --theme-bg-subtle: #f8fafc;
+    --theme-bg-offset: #f1f5f9;
+    --theme-border: #e2e8f0;
     --theme-code-bg: #f8fafc;
     --theme-code-color: #1e293b;
-    --theme-code-inline-bg: #f1f5f9;
-    --theme-callout-bg: #f1f5f9;
-    --theme-sidebar-bg: #f8fafc;
-    --theme-hover: #f1f5f9;
+    --theme-code-inline-bg: #e0e7ff;
+    --theme-callout-bg: rgba(50, 69, 255, 0.05);
+    --theme-sidebar-bg: rgba(248, 250, 252, 0.8);
+    --theme-hover: rgba(50, 69, 255, 0.08);
 
-    /* 平滑过渡 - 全局设置 */
-    --transition-speed: 0.35s;
-    --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    /* 浅色主题阴影 */
+    --theme-shadow-sm: 0 2px 8px rgba(50, 69, 255, 0.08);
+    --theme-shadow-md: 0 4px 16px rgba(50, 69, 255, 0.12);
+    --theme-shadow-lg: 0 8px 32px rgba(50, 69, 255, 0.16);
+
+    /* Astro 动画 */
+    --transition-speed-fast: 0.2s;
+    --transition-speed: 0.4s;
+    --transition-speed-slow: 0.6s;
+    --transition-timing: cubic-bezier(.23, 1, .32, 1);
+
+    /* 布局 */
+    --sidebar-width: 280px;
+
+    /* 字重 */
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* 圆角 */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    /* 旧变量兼容 */
+    --primary-color: #3245ff;
+    --secondary-color: #bc52ee;
+    --background-color: #ffffff;
+    --border-color: #e2e8f0;
+    --hover-color: rgba(50, 69, 255, 0.08);
+    --text-color: #1a1a1a;
 }
 
 [data-theme="dark"] {
-    --primary-color: #a78bfa;
-    --secondary-color: #c4b5fd;
-    --background-color: #1a1a1a;
-    --border-color: #404040;
-    --hover-color: #2d2d2d;
-    --text-color: #e5e5e5;
+    /* Astro 暗色主题 */
+    --theme-accent: #bc52ee;
+    --theme-accent-secondary: #3245ff;
+    --theme-text-accent: #bc52ee;
+    --theme-text: #f1f5f9;
+    --theme-text-light: #94a3b8;
+    --theme-text-lighter: #64748b;
+    --theme-bg: #0d0f14;
+    --theme-bg-subtle: #17181c;
+    --theme-bg-offset: #23262f;
+    --theme-border: rgba(255, 255, 255, 0.1);
+    --theme-code-bg: #1a1d29;
+    --theme-code-color: #e2e8f0;
+    --theme-code-inline-bg: rgba(188, 82, 238, 0.15);
+    --theme-callout-bg: rgba(44, 44, 44, 0.4);
+    --theme-sidebar-bg: rgba(23, 24, 28, 0.8);
+    --theme-hover: rgba(188, 82, 238, 0.1);
 
-    --theme-accent: #a78bfa;
-    --theme-text-accent: #a78bfa;
-    --theme-text: #e5e5e5;
-    --theme-text-light: #a3a3a3;
-    --theme-bg: #1a1a1a;
-    --theme-bg-subtle: #252525;
-    --theme-bg-offset: #2a2a2a;
-    --theme-border: #404040;
-    --theme-code-bg: #1e1e2e;
-    --theme-code-color: #cdd6f4;
-    --theme-code-inline-bg: #313244;
-    --theme-callout-bg: #252525;
-    --theme-sidebar-bg: #1e1e1e;
-    --theme-hover: #2d2d2d;
+    /* 暗色主题阴影 */
+    --theme-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 12px rgba(188, 82, 238, 0.1);
+    --theme-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 24px rgba(188, 82, 238, 0.15);
+    --theme-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 36px rgba(188, 82, 238, 0.2);
+
+    /* 旧变量兼容 */
+    --primary-color: #bc52ee;
+    --secondary-color: #3245ff;
+    --background-color: #0d0f14;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --hover-color: rgba(188, 82, 238, 0.1);
+    --text-color: #f1f5f9;
 }
 
 html, body {

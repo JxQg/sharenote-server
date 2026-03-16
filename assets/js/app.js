@@ -104,6 +104,125 @@ document.addEventListener('DOMContentLoaded', async () => {
         heading.appendChild(anchor);
     });
 
+    // Initialize scroll animations
+    initScrollAnimations();
+
+    // Initialize scroll progress indicator
+    initScrollProgress();
+
+    // Initialize back to top button
+    initBackToTop();
+
     // 初始化主题（跟随系统偏好或用户上次选择）
     initTheme();
 });
+
+// ========== 滚动动画功能 ==========
+function initScrollAnimations() {
+    // 创建 Intersection Observer
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+                // 动画完成后取消观察以提升性能
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // 观察所有需要动画的元素
+    const animatedElements = document.querySelectorAll(
+        '.markdown-body h1, .markdown-body h2, .markdown-body h3, ' +
+        '.markdown-body p, .markdown-body ul, .markdown-body ol, ' +
+        '.markdown-body blockquote, .markdown-body pre, ' +
+        '.markdown-body table, .markdown-body .callout'
+    );
+
+    animatedElements.forEach(el => {
+        observer.observe(el);
+    });
+}
+
+// ========== 滚动进度指示器 ==========
+function initScrollProgress() {
+    // 创建进度条元素
+    const progressBar = document.createElement('div');
+    progressBar.className = 'scroll-progress';
+    progressBar.innerHTML = '<div class="scroll-progress-bar"></div>';
+    document.body.appendChild(progressBar);
+
+    const progressBarFill = progressBar.querySelector('.scroll-progress-bar');
+
+    // 更新进度条
+    function updateProgress() {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+
+        progressBarFill.style.width = `${Math.min(scrollPercent, 100)}%`;
+    }
+
+    // 监听滚动事件
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateProgress();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // 初始化
+    updateProgress();
+}
+
+// ========== 返回顶部按钮 ==========
+function initBackToTop() {
+    // 创建返回顶部按钮
+    const backToTopBtn = document.createElement('button');
+    backToTopBtn.className = 'back-to-top';
+    backToTopBtn.innerHTML = '↑';
+    backToTopBtn.setAttribute('aria-label', '返回顶部');
+    document.body.appendChild(backToTopBtn);
+
+    // 显示/隐藏按钮
+    function toggleBackToTop() {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    }
+
+    // 点击返回顶部
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // 监听滚动
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                toggleBackToTop();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // 初始化
+    toggleBackToTop();
+}

@@ -6,24 +6,6 @@
     --nav-width: 280px;
     --toc-width: 240px;
     --nav-pad-x: 1.5rem;
-    --theme-bg: #ffffff;
-    --theme-bg-offset: #f5f5f5;
-    --theme-bg-subtle: #f9f9f9;
-    --theme-border: #e5e5e5;
-    --theme-text: #1a1a1a;
-    --theme-text-light: #666666;
-    --theme-accent: #8d46e7;
-    --theme-accent-secondary: #6d35b5;
-}
-
-/* 暗色主题变量 */
-[data-theme="dark"] {
-    --theme-bg: #1a1a1a;
-    --theme-bg-offset: #2a2a2a;
-    --theme-bg-subtle: #252525;
-    --theme-border: #404040;
-    --theme-text: #ffffff;
-    --theme-text-light: #999999;
 }
 
 * {
@@ -35,10 +17,43 @@
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.5;
+    line-height: 1.75;
     color: var(--theme-text);
     background: var(--theme-bg);
     min-height: 100vh;
+    position: relative;
+}
+
+/* Astro 风格背景渐变 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: -1;
+    background: radial-gradient(ellipse at top, rgba(50, 69, 255, 0.15), transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(188, 82, 238, 0.1), transparent 50%);
+}
+
+[data-theme="dark"] body::before {
+    background: radial-gradient(ellipse at top, rgba(50, 69, 255, 0.2), transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(188, 82, 238, 0.15), transparent 50%);
+}
+
+/* 移动端背景渐变优化 */
+@media (max-width: 768px) {
+    body::before {
+        background: radial-gradient(ellipse at top, rgba(50, 69, 255, 0.08), transparent 40%),
+                    radial-gradient(ellipse at bottom, rgba(188, 82, 238, 0.06), transparent 40%);
+    }
+
+    [data-theme="dark"] body::before {
+        background: radial-gradient(ellipse at top, rgba(50, 69, 255, 0.12), transparent 40%),
+                    radial-gradient(ellipse at bottom, rgba(188, 82, 238, 0.08), transparent 40%);
+    }
 }
 
 .container {
@@ -53,11 +68,22 @@ body {
     top: 0;
     width: var(--nav-width);
     height: 100vh;
-    background: var(--theme-bg);
+    background: var(--theme-sidebar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-right: 1px solid var(--theme-border);
+    box-shadow: var(--theme-shadow-sm);
     z-index: 100;
     display: flex;
     flex-direction: column;
+}
+
+/* 移动端侧边栏玻璃态优化 */
+@media (max-width: 768px) {
+    .nav-sidebar {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
 }
 
 .content {
@@ -74,11 +100,22 @@ body {
     top: 0;
     width: var(--toc-width);
     height: 100vh;
-    background: var(--theme-bg);
+    background: var(--theme-sidebar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-left: 1px solid var(--theme-border);
+    box-shadow: var(--theme-shadow-sm);
     z-index: 100;
     display: flex;
     flex-direction: column;
+}
+
+/* 移动端 TOC 侧边栏玻璃态优化 */
+@media (max-width: 1200px) {
+    .toc-sidebar {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
 }
 
 #toc {
