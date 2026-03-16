@@ -160,3 +160,4 @@ static/
 logs/
 CLAUDE.md
 OPTIMIZATION.md
+*.md

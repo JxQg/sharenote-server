@@ -119,6 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ========== 滚动动画功能 ==========
 function initScrollAnimations() {
+    // 添加标记类，表示 JS 已加载，可以启用滚动动画
+    document.documentElement.classList.add('scroll-animations-enabled');
+
     // 创建 Intersection Observer
     const observerOptions = {
         root: null,

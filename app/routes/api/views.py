@@ -135,6 +135,10 @@ def init_routes(limiter=None):
             logging.error(f"Error serving asset {filename}: {e}")
             abort(500)
 
+    # 为静态资源路由添加限流豁免
+    if limiter:
+        limiter.exempt(serve_assets)
+
     @views_bp.route('/static/<path:filename>')
     def serve_static(filename):
         """服务static目录下的静态文件"""
@@ -149,6 +153,10 @@ def init_routes(limiter=None):
         except Exception as e:
             logging.error(f"Error serving static file {filename}: {e}")
             abort(500)
+
+    # 为静态资源路由添加限流豁免
+    if limiter:
+        limiter.exempt(serve_static)
 
     @views_bp.route('/notes/<doc_id>/assets/<path:filename>')
     def serve_note_assets(doc_id, filename):

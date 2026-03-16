@@ -122,14 +122,22 @@
 
 /* ========== 滚动动画 ========== */
 
-/* 标题滚动进入动画 */
+/* 标题滚动进入动画 - 默认可见，避免 JS 失败时内容不可见 */
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3 {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.6s var(--transition-timing),
                 transform 0.6s var(--transition-timing);
+}
+
+/* 只有在 JS 加载后才添加动画准备状态 */
+.scroll-animations-enabled .markdown-body h1,
+.scroll-animations-enabled .markdown-body h2,
+.scroll-animations-enabled .markdown-body h3 {
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 .markdown-body h1.animate-in,
@@ -139,7 +147,7 @@
     transform: translateY(0);
 }
 
-/* 段落和列表滚动进入 */
+/* 段落和列表滚动进入 - 默认可见 */
 .markdown-body p,
 .markdown-body ul,
 .markdown-body ol,
@@ -147,10 +155,22 @@
 .markdown-body pre,
 .markdown-body table,
 .markdown-body .callout {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.5s var(--transition-timing),
                 transform 0.5s var(--transition-timing);
+}
+
+/* 只有在 JS 加载后才添加动画准备状态 */
+.scroll-animations-enabled .markdown-body p,
+.scroll-animations-enabled .markdown-body ul,
+.scroll-animations-enabled .markdown-body ol,
+.scroll-animations-enabled .markdown-body blockquote,
+.scroll-animations-enabled .markdown-body pre,
+.scroll-animations-enabled .markdown-body table,
+.scroll-animations-enabled .markdown-body .callout {
+    opacity: 0;
+    transform: translateY(20px);
 }
 
 .markdown-body p.animate-in,
