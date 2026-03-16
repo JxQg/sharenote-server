@@ -37,6 +37,22 @@ def validate_file_access(file_path):
 
     return True
 
+def process_css_content(css_content):
+    """处理 CSS 内容，移除引用缺失字体文件的 @font-face 规则"""
+    try:
+        # 移除所有 @font-face 规则（因为字体文件通常不会被上传）
+        css_content = re.sub(
+            r'@font-face\s*\{[^}]*\}',
+            '',
+            css_content,
+            flags=re.DOTALL
+        )
+        logging.info("已移除 CSS 中的 @font-face 规则")
+        return css_content
+    except Exception as e:
+        logging.warning(f"处理 CSS 内容时出错: {e}")
+        return css_content
+
 def init_routes(limiter=None):
     """初始化资源文件相关路由"""
 
@@ -70,6 +86,12 @@ def init_routes(limiter=None):
                 name = 'theme'
                 file_path = os.path.join('static', f'{name}.{filetype}')
                 url = f'{config.SERVER_URL}/static/{name}.{filetype}'
+                os.makedirs('static', exist_ok=True)
+                css_content = process_css_content(request.data.decode('utf-8', errors='replace'))
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(css_content)
+                logging.info(f'File uploaded: {file_path}')
+                return jsonify({'success': True, 'url': url})
             else:
                 if note_id:
                     assets_path = os.path.join('static', 'notes', note_id, 'assets')
@@ -81,11 +103,11 @@ def init_routes(limiter=None):
                     file_path = os.path.join('static', f'{name}.{filetype}')
                     url = f'{config.SERVER_URL}/static/{name}.{filetype}'
 
-            with open(file_path, 'wb') as f:
-                f.write(request.data)
+                with open(file_path, 'wb') as f:
+                    f.write(request.data)
 
-            logging.info(f'File uploaded: {file_path}')
-            return jsonify({'success': True, 'url': url})
+                logging.info(f'File uploaded: {file_path}')
+                return jsonify({'success': True, 'url': url})
         except Exception as e:
             logging.error(f"Error uploading file: {e}")
             abort(500)
