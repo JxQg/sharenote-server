@@ -167,8 +167,8 @@ def handle_note_assets(data, filename: str):
                         logging.error(f"Error moving asset {moved_from}: {e}")
                         continue
 
-            # 更新文件 URL（使用相对路径，相对于 static/{filename}.html）
-            file['url'] = f"notes/{filename}/assets/{safe_name}"
+            # 更新文件 URL（使用绝对路径）
+            file['url'] = f"/notes/{filename}/assets/{safe_name}"
 
             # 更新文档内容中所有可能的旧引用格式
             if 'content' in data['template']:
@@ -196,13 +196,19 @@ def handle_note_assets(data, filename: str):
                 # 从旧文档中提取图片资源路径（支持相对路径和绝对路径）
                 old_assets = set()
                 for line in old_content.split('\n'):
-                    # 匹配相对路径 src="notes/{filename}/assets/
-                    if f'src="notes/{filename}/assets/' in line:
+                    # 匹配绝对路径 src="/notes/{filename}/assets/
+                    if f'src="/notes/{filename}/assets/' in line:
                         start = line.find('src="') + 5
                         end = line.find('"', start)
                         if start > 4 and end > start:
                             old_assets.add(line[start:end])
-                    # 兼容旧的绝对路径格式
+                    # 匹配旧的相对路径 src="notes/{filename}/assets/
+                    elif f'src="notes/{filename}/assets/' in line:
+                        start = line.find('src="') + 5
+                        end = line.find('"', start)
+                        if start > 4 and end > start:
+                            old_assets.add(line[start:end])
+                    # 兼容更旧的绝对路径格式 src="/static/notes/
                     elif 'src="/static/notes/' in line:
                         start = line.find('src="') + 5
                         end = line.find('"', start)
@@ -249,10 +255,10 @@ def handle_note_assets(data, filename: str):
                         # 移动文件到笔记目录
                         shutil.move(file_path, target_path)
                         logging.info(f"Migrated file from {file_path} to {target_path}")
-                        # 更新文档中的引用（使用相对路径）
+                        # 更新文档中的引用（使用绝对路径）
                         if 'content' in data['template']:
                             old_url = f"/static/{f}"
-                            new_url = f"notes/{filename}/assets/{f}"
+                            new_url = f"/notes/{filename}/assets/{f}"
                             data['template']['content'] = data['template']['content'].replace(old_url, new_url)
                     except Exception as e:
                         logging.error(f"Error migrating file {file_path}: {e}")
