@@ -21,7 +21,6 @@ body {
     color: var(--theme-text);
     background: var(--theme-bg);
     min-height: 100vh;
-    position: relative;
 }
 
 /* Astro 风格背景渐变 */
