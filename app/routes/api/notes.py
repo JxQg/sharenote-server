@@ -35,10 +35,17 @@ def init_routes(limiter=None):
                 logging.info("创建/更新首页")
 
             if is_index:
-                html, _ = cook_note(data)
                 filename = 'index'
             else:
-                html, filename = cook_note(data)
+                # 先生成filename用于资源处理
+                from app.services.note_service import slugify, gen_short_code
+                filename = slugify(template['title']) if template['title'] else 'untitled-' + gen_short_code('untitled')
+
+            # 先处理资源文件，替换路径
+            handle_note_assets(data, filename)
+
+            # 然后生成HTML（此时content中的路径已经被替换）
+            html, _ = cook_note(data)
 
             os.makedirs('static', exist_ok=True)
             file_path = os.path.normpath(os.path.join('static', f'{filename}.html'))
@@ -46,8 +53,6 @@ def init_routes(limiter=None):
             if not file_path.startswith('static'):
                 logging.error('Invalid file path')
                 abort(400)
-
-            handle_note_assets(data, filename)
 
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(html)
@@ -205,9 +210,12 @@ def init_routes(limiter=None):
                 'files': data.get('files', [])
             }
 
+            # 先处理资源文件，替换路径
+            handle_note_assets(template_data, 'index')
+
+            # 然后生成HTML（此时content中的路径已经被替换）
             html, _ = cook_note({'template': template_data['template']})
             file_path = 'static/index.html'
-            handle_note_assets(template_data, 'index')
 
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(html)
