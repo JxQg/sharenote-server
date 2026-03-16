@@ -66,13 +66,11 @@
 
 .nav-sidebar {
     animation: slideInLeft 0.6s var(--transition-timing) both;
-    will-change: transform, opacity;
 }
 
 .toc-sidebar {
     animation: slideInRight 0.6s var(--transition-timing) both;
     animation-delay: 0.1s;
-    will-change: transform, opacity;
 }
 
 .content {

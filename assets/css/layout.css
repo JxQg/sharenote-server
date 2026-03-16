@@ -68,6 +68,7 @@ body::before {
     top: 0;
     width: var(--nav-width);
     height: 100vh;
+    overflow: hidden;
     background: var(--theme-sidebar-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -100,6 +101,7 @@ body::before {
     top: 0;
     width: var(--toc-width);
     height: 100vh;
+    overflow: hidden;
     background: var(--theme-sidebar-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
