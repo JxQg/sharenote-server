@@ -65,11 +65,11 @@
 /* ========== 应用加载动画 ========== */
 
 .nav-sidebar {
-    animation: slideInLeft 0.6s var(--transition-timing) both;
+    animation: fadeIn 0.6s var(--transition-timing) both;
 }
 
 .toc-sidebar {
-    animation: slideInRight 0.6s var(--transition-timing) both;
+    animation: fadeIn 0.6s var(--transition-timing) both;
     animation-delay: 0.1s;
 }
 
