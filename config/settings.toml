@@ -9,6 +9,10 @@ disable_file_watch = false
 [security]
 secret_api_key = "yoursecretkey"
 max_upload_size_mb = 16
+allowed_origins = ["*"]  # CORS 允许的来源，生产环境应配置具体域名，如 ["https://yourdomain.com"]
+rate_limit_enabled = true
+rate_limit_default = "200 per day, 50 per hour"  # 默认限流规则
+rate_limit_upload = "20 per hour"  # 上传接口限流
 
 [files]
 allowed_filetypes = ["png", "jpg", "jpeg", "gif", "pdf", "css", "html", "webp", "svg", "ttf", "otf", "woff", "woff2", "js", "ico"]

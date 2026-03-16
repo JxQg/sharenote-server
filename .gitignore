@@ -158,3 +158,5 @@ out.*
 *.json
 static/
 logs/
+CLAUDE.md
+OPTIMIZATION.md
