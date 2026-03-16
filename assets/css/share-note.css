@@ -285,9 +285,10 @@
     text-transform: uppercase;
     color: var(--theme-text);
     margin-bottom: 0.5rem; /* 减小了底部间距 */
-    padding-bottom: 0.5rem; /* 减小了底部内边距 */
+    padding: 1rem var(--nav-pad-x) 0.5rem; /* 添加顶部和左右内边距 */
     border-bottom: 1px solid var(--theme-border);
     letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 .toc-list {
@@ -764,6 +765,7 @@ body, .nav-sidebar, .toc-sidebar, .content,
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .logo a {

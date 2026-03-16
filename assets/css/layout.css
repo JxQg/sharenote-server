@@ -86,7 +86,8 @@ body {
     overflow-y: auto;
     overscroll-behavior: contain;
     flex: 1;
-    padding: 2rem var(--nav-pad-x);
+    padding: 0 var(--nav-pad-x) 2rem;
+    min-height: 0;
 }
 
 .toc-item {
@@ -112,6 +113,7 @@ body {
     flex: 1;
     padding-left: 1rem;
     padding-right: 1rem;
+    min-height: 0;
 }
 
 #doc-tree a {
