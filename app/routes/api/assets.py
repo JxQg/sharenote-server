@@ -60,8 +60,6 @@ def init_routes(limiter=None):
     @require_auth
     def upload():
         """处理文件上传"""
-        if limiter:
-            limiter.limit(config.get('security.rate_limit_upload', '20 per hour'))(lambda: None)()
         try:
             required_headers = ['x-sharenote-hash', 'x-sharenote-filetype']
             for header in required_headers:
