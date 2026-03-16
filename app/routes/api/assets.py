@@ -10,13 +10,15 @@ assets_bp = Blueprint('assets', __name__)
 
 def validate_file_access(file_path):
     """验证文件访问的安全性"""
-    file_path = os.path.normpath(file_path)
-
+    # 先检查路径遍历，再进行normpath
     if '..' in file_path:
         logging.warning(f"检测到路径遍历尝试: {file_path}")
         return False
 
+    file_path = os.path.normpath(file_path)
+
     if not os.path.exists(file_path):
+        logging.debug(f"文件不存在: {file_path}")
         return False
 
     if os.path.isdir(file_path):
