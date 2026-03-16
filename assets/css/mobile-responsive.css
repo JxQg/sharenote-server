@@ -2,6 +2,12 @@
 
 /* 移动端字号和间距调整 */
 @media (max-width: 768px) {
+    /* 返回顶部按钮位置调整，避免与移动导航冲突 */
+    .back-to-top {
+        bottom: 5.5rem;
+        right: 1rem;
+    }
+
     /* 标题字号缩小 */
     .markdown-body h1 {
         font-size: 2.25rem;

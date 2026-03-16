@@ -294,7 +294,6 @@ body::before {
 /* 标题渐变流动 */
 .markdown-body h1 {
     background-size: 200% 200%;
-    animation: gradientFlow 3s ease infinite;
 }
 
 /* 链接渐变流动 */

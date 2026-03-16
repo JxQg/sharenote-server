@@ -27,7 +27,6 @@
     margin-bottom: 1.5rem;
     font-weight: 700;
     line-height: 1.2;
-    color: var(--theme-text);
     background: var(--astro-gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -69,7 +68,6 @@
 }
 
 .markdown-body a {
-    color: var(--theme-text-accent);
     text-decoration: none;
     position: relative;
     transition: color var(--transition-speed) var(--transition-timing);
@@ -155,8 +153,8 @@
 }
 
 .markdown-body blockquote {
-    border-left: 4px solid transparent;
-    border-image: var(--astro-gradient-primary) 1;
+    position: relative;
+    border-left: none;
     margin: 1.5rem 0;
     padding: 1rem 1.5rem;
     background: var(--astro-gradient-subtle);
@@ -166,6 +164,17 @@
     border-radius: var(--radius-md);
     box-shadow: var(--theme-shadow-sm);
     transition: all var(--transition-speed) var(--transition-timing);
+}
+
+.markdown-body blockquote::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--astro-gradient-primary);
+    border-radius: 2px 0 0 2px;
 }
 
 .markdown-body blockquote:hover {
@@ -219,11 +228,7 @@
     margin: 1.5rem 0;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--theme-shadow-sm);
-    border: 2px solid transparent;
-    background-image: var(--astro-gradient-primary), var(--theme-bg);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
+    box-shadow: 0 0 0 2px var(--theme-accent), var(--theme-shadow-sm);
 }
 
 .markdown-body table th,
