@@ -332,8 +332,8 @@ def convert_obsidian_images(content: str, doc_filename: str) -> str:
         # 构建新的资源路径
         assets_path = os.path.join('static', 'notes', doc_filename, 'assets')
         new_file_path = os.path.join(assets_path, img_filename)
-        # 使用相对路径（相对于 static/{doc_filename}.html）
-        web_path = f'notes/{doc_filename}/assets/{img_filename}'
+        # 使用绝对路径，指向 static 目录下的资源
+        web_path = f'/static/notes/{doc_filename}/assets/{img_filename}'
         
         # 尝试多个位置查找原始文件
         possible_paths = [
